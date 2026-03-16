@@ -26,6 +26,14 @@ app.add_middleware(
 # In-memory session tracking for the Bidi-Streaming
 active_sessions: Dict[str, WebSocket] = {}
 
+async def broadcast_message(message: str):
+    """Sends a real-time message to all active WebSocket sessions."""
+    for session_id, ws in list(active_sessions.items()):
+        try:
+            await ws.send_text(json.dumps({"event": "fsm_update", "message": message}))
+        except Exception:
+            del active_sessions[session_id]
+
 class OnboardingRequest(BaseModel):
     merchant_id: str
     document_url: str
@@ -39,7 +47,7 @@ async def start_onboarding(request: OnboardingRequest, api_key: str = Security(v
     """
     Kicks off the autonomous onboarding FSM process
     """
-    coordinator = CoordinatorAgent(request.merchant_id, request.document_url)
+    coordinator = CoordinatorAgent(request.merchant_id, request.document_url, broadcast_callback=broadcast_message)
     
     # Run the FSM asynchronously in the background so we don't block the API
     asyncio.create_task(coordinator.run_fsm())

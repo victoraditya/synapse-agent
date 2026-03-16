@@ -10,17 +10,23 @@ class CoordinatorAgent:
     The 'Brain' of Project Synapse.
     An Asynchronous Finite State Machine (FSM) that dictates the workflow.
     """
-    def __init__(self, merchant_id: str, document_url: str):
+    def __init__(self, merchant_id: str, document_url: str, broadcast_callback=None):
         self.merchant_id = merchant_id
         self.document_url = document_url
         self.state = "INIT"
         self.merchant_data = {}
+        self.broadcast_callback = broadcast_callback
+        
+    async def _log_and_broadcast(self, msg: str):
+        logger.info(msg)
+        if self.broadcast_callback:
+            await self.broadcast_callback(msg)
 
     async def run_fsm(self):
         """
         Main Event Loop for the agent FSM.
         """
-        logger.info(f"Starting Onboarding FSM for Merchant: {self.merchant_id}")
+        await self._log_and_broadcast(f"Starting Onboarding FSM for Merchant: {self.merchant_id}")
         
         try:
             await self.phase_1_extraction()
@@ -29,7 +35,7 @@ class CoordinatorAgent:
             
             self.state = "COMPLETED"
             await memory.save_long_term(self.merchant_id, {"status": self.state, "data": self.merchant_data})
-            logger.info("Onboarding FSM Completed Successfully.")
+            await self._log_and_broadcast("Onboarding FSM Completed Successfully.")
             
         except Exception as e:
             self.state = "FAILED"
@@ -41,7 +47,7 @@ class CoordinatorAgent:
         Phase 1: Download document, run OCR, use Gemini to extract structured JSON.
         """
         self.state = "PHASE_1_EXTRACTION"
-        logger.info(f"[{self.state}] Downloading and extracting {self.document_url}...")
+        await self._log_and_broadcast(f"[{self.state}] Downloading and extracting {self.document_url}...")
         
         # Simulate processing time
         await asyncio.sleep(1.5)
@@ -59,7 +65,7 @@ class CoordinatorAgent:
         Phase 2: Review extracted data against risk policies.
         """
         self.state = "PHASE_2_RISK_ANALYSIS"
-        logger.info(f"[{self.state}] Analyzing data for Risk compliance...")
+        await self._log_and_broadcast(f"[{self.state}] Analyzing data for Risk compliance...")
         
         await asyncio.sleep(1)
         
@@ -72,7 +78,7 @@ class CoordinatorAgent:
         Phase 3: Safely hand over control to the multimodal 'Eyes' to interact with the legacy ERP.
         """
         self.state = "PHASE_3_UI_ENTRY"
-        logger.info(f"[{self.state}] Delegating to Navigator Agent for ERP entry...")
+        await self._log_and_broadcast(f"[{self.state}] Delegating to Navigator Agent for ERP entry...")
         
         # Instantiate the Navigator pointing at our mock ERP
         target_url = "http://localhost:8080/mock_erp.html"  # In a real environment, this would be a remote ERP IP
