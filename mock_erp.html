@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Legacy ERP System - Merchant Onboarding</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #2563eb;
+            --background: #f8fafc;
+            --surface: #ffffff;
+            --text: #0f172a;
+            --border: #e2e8f0;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--background);
+            color: var(--text);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .erp-container {
+            background: var(--surface);
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            width: 100%;
+            max-width: 600px;
+        }
+
+        .header {
+            margin-bottom: 32px;
+            padding-bottom: 16px;
+            border-bottom: 2px solid var(--border);
+        }
+
+        .header h1 {
+            margin: 0;
+            font-size: 24px;
+            font-weight: 600;
+        }
+
+        .header p {
+            margin: 8px 0 0;
+            color: #64748b;
+            font-size: 14px;
+        }
+
+        .form-group {
+            margin-bottom: 24px;
+        }
+
+        label {
+            display: block;
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 8px;
+            color: #334155;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font-size: 14px;
+            transition: border-color 0.2s;
+            box-sizing: border-box;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        .actions {
+            display: flex;
+            gap: 16px;
+            margin-top: 32px;
+        }
+
+        button {
+            flex: 1;
+            padding: 12px;
+            border-radius: 6px;
+            font-weight: 500;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: none;
+        }
+
+        .btn-submit {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        .btn-submit:hover {
+            background-color: #1d4ed8;
+        }
+
+        .btn-cancel {
+            background-color: transparent;
+            border: 1px solid var(--border);
+            color: #475569;
+        }
+
+        .btn-cancel:hover {
+            background-color: #f1f5f9;
+        }
+    </style>
+</head>
+<body>
+    <div class="erp-container">
+        <div class="header">
+            <h1>Synapse ERP Terminal</h1>
+            <p>Module: Merchant Risk Data Entry (v1.0.4)</p>
+        </div>
+
+        <form id="onboardingForm">
+            <div class="form-group">
+                <label for="merchantName">Merchant Legal Name</label>
+                <input type="text" id="merchantName" placeholder="Enter full legal name">
+            </div>
+
+            <div class="form-group">
+                <label for="taxId">Tax ID (EIN/SSN)</label>
+                <input type="text" id="taxId" placeholder="XX-XXXXXXX">
+            </div>
+
+            <div class="form-group">
+                <label for="riskScore">Calculated Risk Score (0-100)</label>
+                <input type="number" id="riskScore" min="0" max="100" placeholder="e.g. 15">
+            </div>
+            
+            <div class="form-group">
+                <label for="approvalStatus">Final Status</label>
+                <input type="text" id="approvalStatus" placeholder="APPROVED | DECLINED | PENDING">
+            </div>
+
+            <div class="actions">
+                <button type="button" class="btn-cancel" onclick="document.getElementById('onboardingForm').reset()">Clear</button>
+                <button type="submit" class="btn-submit">Submit to Ledger</button>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        document.getElementById('onboardingForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const name = document.getElementById('merchantName').value;
+            alert(`Merchant ${name || 'N/A'} submitted successfully to legacy ERP!`);
+        });
+    </script>
+</body>
+</html>
