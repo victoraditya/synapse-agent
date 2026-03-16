@@ -31,20 +31,16 @@ source .venv/bin/activate
 pip install -r requirements.txt
 ```
 
-### 3. Deploy to Google Cloud (0.2 Bonus Points)
-This project uses `cloudbuild.yaml` to ensure automated deployment.
-```bash
-# Set your project ID
-export PROJECT_ID="your-gcp-project-id"
-
-# Trigger the deployment
-sh deploy.sh
-```
+### 3. Deploy to Google Cloud (CI/CD)
+This project features an automated, zero-touch CI/CD pipeline using **GitHub Actions & Google Workload Identity Federation**.
+1. Simply push your code to the `main` branch.
+2. GitHub Actions will securely authenticate to GCP and trigger `cloudbuild.yaml`.
+3. The Agent Engine will automatically deploy to Cloud Run!
 
 ### 4. Run the Live Demo
-1.  Open the `mock_erp.html` file in your browser. This simulates the legacy system.
-2.  Open the Cloud Run `/live` endpoint.
-3.  Initiate a voice session ("Start onboarding Merchant XYZ"). The Coordinator Agent will guide you through the FSM phases and use the Navigator Agent to input fields.
+1.  Open the `mock_erp.html` file in your browser to simulate the legacy system.
+2.  Connect to your Live WebSocket Endpoint: `wss://synapse-service-3dtobsp3xq-uc.a.run.app/live`
+3.  Initiate a voice session ("Start onboarding Merchant XYZ"). The Coordinator Agent will guide you through the FSM phases and use the Navigator Agent to physically click and input data.
 
 ## 🧠 Architecture Overview
 Please see `docs/DESIGN.md` for a full breakdown of the Brain, Eyes, Memory, and Voice components.
