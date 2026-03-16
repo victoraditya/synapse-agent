@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
 
 env:
-  PROJECT_ID: agent-gke-demo
+  PROJECT_ID: synapse-490402
   SERVICE_NAME: synapse-service
   REGION: us-central1
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
@@ -29,8 +29,8 @@ jobs:
         id: auth
         uses: google-github-actions/auth@v2
         with:
-          workload_identity_provider: 'projects/491082710634/locations/global/workloadIdentityPools/github-actions-pool/providers/github-provider-2'
-          service_account: '491082710634-compute@developer.gserviceaccount.com'
+          workload_identity_provider: 'projects/35854253693/locations/global/workloadIdentityPools/github-actions-pool/providers/github-provider'
+          service_account: '35854253693-compute@developer.gserviceaccount.com'
 
       - name: Set up Cloud SDK
         uses: google-github-actions/setup-gcloud@v2
