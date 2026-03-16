@@ -68,6 +68,7 @@
             font-weight: 800;
             background: linear-gradient(135deg, #fff 0%, #94a3b8 100%);
             -webkit-background-clip: text;
+            background-clip: text;
             -webkit-text-fill-color: transparent;
         }
 
@@ -462,7 +463,7 @@
             }
         }
 
-        function sendMessage() {
+        async function sendMessage() {
             if (!ws || ws.readyState !== WebSocket.OPEN) return;
             
             const msg = messageInput.value.trim();
@@ -475,6 +476,36 @@
             // Very basic simulation of the backend processing
             if (msg.toLowerCase().includes('stop') || msg.toLowerCase().includes('barge')) {
                  setTimeout(() => appendMessage('Transmitting audio interrupt...', 'system'), 200);
+            }
+
+            // Trigger the actual Backend FSM if they ask to start
+            if (msg.toLowerCase().includes('start') || msg.toLowerCase().includes('begin') || msg.toLowerCase().includes('onboard')) {
+                appendMessage('Triggering Autonomous Onboarding Workflow...', 'system');
+                try {
+                    const urlObj = new URL(wsUrlInput.value);
+                    const httpProtocol = urlObj.protocol === 'wss:' ? 'https:' : 'http:';
+                    const apiUrl = `${httpProtocol}//${urlObj.host}/api/v1/onboard?api_key=dev-secret-key-123`;
+                    
+                    const response = await fetch(apiUrl, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            merchant_id: "Merchant 4492-A",
+                            document_url: "gs://demo-bucket/doc.pdf"
+                        })
+                    });
+                    
+                    const data = await response.json();
+                    if (data.status === 'accepted') {
+                        appendMessage(`[Agent]: ${data.message}`, 'received');
+                    } else {
+                        appendMessage(`[Agent Error]: ${JSON.stringify(data)}`, 'received');
+                    }
+                } catch (e) {
+                    appendMessage(`[Error]: Failed to connect to REST API. ${e.message}`, 'system');
+                }
             }
         }
 
